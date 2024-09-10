@@ -3,7 +3,7 @@ const cors = require("cors");
 const app = express();
 
 const { initializeDatabase } = require("./db/db.connect");
-const { Books } = require("./models/books.model");
+const { Movies } = require("./models/movies.model");
 
 app.use(cors());
 app.use(express.json());
@@ -14,40 +14,39 @@ app.get("/", (req, res) => {
   res.send("Hello, Express!");
 });
 
-app.get("/books", async (req, res) => {
+app.get("/movies", async (req, res) => {
   try {
-    const allbooks = await Books.find();
-    res.json(allbooks);
+    const allmovies = await Movies.find();
+    res.json(allmovies);
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
   }
 });
 
-app.post("/books", async (req, res) => {
-  const { bookName, author, genre } = req.body;
-
+app.post("/movies", async (req, res) => {
+  const { title, director, genre } = req.body;
   try {
-    const bookData = new Books({ bookName, author, genre });
-    await bookData.save();
-    res.status(201).json(bookData);
+    const movieData = new Movies({ title, director, genre });
+    await movieData.save();
+    res.status(201).json(movieData);
   } catch (error) {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
-app.delete("/books/:id", async (req, res) => {
-  const bookId = req.params.id;
+app.delete("/movies/:id", async (req, res) => {
+  const movieId = req.params.id;
 
   try {
-    const deletedBook = await Books.findByIdAndDelete(bookId);
+    const deletedMovie = await Movies.findByIdAndDelete(movieId);
 
-    if (!deletedBook) {
+    if (!deletedMovie) {
       return res.status(404).json({ error: "Book not found" });
     }
 
     res.status(200).json({
-      message: "Book deleted successfully",
-      book: deletedBook,
+      message: "Movie deleted successfully",
+      movie: deletedMovie,
     });
   } catch (error) {
     console.error(error);
@@ -55,7 +54,7 @@ app.delete("/books/:id", async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
