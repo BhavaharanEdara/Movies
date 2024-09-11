@@ -34,6 +34,28 @@ app.post("/movies", async (req, res) => {
   }
 });
 
+app.put("/movies/:id", async(req,res)=>{
+
+  const movieId = req.params.id
+  try{
+    const updatedMovie = await Movies.findByIdAndUpdate(movieId, req.body, {new: true})
+    if (!updatedMovie) {
+      return res.status(404).json({ error: "Movie not found" });
+    }
+
+    res.status(200).json({
+      message: "Movie updated successfully",
+      movie: updatedMovie,
+    });
+
+  }
+  catch(error){
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+})
+
+
 app.delete("/movies/:id", async (req, res) => {
   const movieId = req.params.id;
 
@@ -41,7 +63,7 @@ app.delete("/movies/:id", async (req, res) => {
     const deletedMovie = await Movies.findByIdAndDelete(movieId);
 
     if (!deletedMovie) {
-      return res.status(404).json({ error: "Book not found" });
+      return res.status(404).json({ error: "Movie not found" });
     }
 
     res.status(200).json({
